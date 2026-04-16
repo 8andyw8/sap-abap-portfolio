@@ -1,3 +1,4 @@
+// Import React hooks
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,21 +11,52 @@ const getBadgeColor = (level) => {
   return "text-red-500";
 };
 
+  // ================================
+  // DATA SOURCE (PORTFOLIO CASES)
+  // ================================
 const data = [
   {
-    category: "WM",
-    title: "LT06 becomes LT04 after Save",
-    difficulty: "Advanced",
+    category: "WM", // kategori case
+    title: "LT06 becomes LT04 after Save", // judul case
+    difficulty: "Advanced", // tingkat kesulitan
     impact: "Prevent warehouse process inconsistency & incorrect transaction flow",
+
+    // Metrics impact bisnis
     metrics: {
       riskReduction: "High",
       manualEffortReduced: "Yes",
       incidentsPrevented: "Recurring issue eliminated",
     },
+
+    // Story / cerita case
     story: `Saat proses warehouse, user melaporkan transaksi berubah dari LT06 ke LT04 setelah save. Ini berisiko mengganggu flow operasional. Saya analisa flow SAP standard dan menemukan perubahan tcode terjadi setelah TO creation. Solusi: simpan context awal dan validasi via enhancement. Hasil: flow kembali stabil tanpa intervensi manual.`,
-    before: "sy-tcode berubah otomatis ke LT04",
-    after: "Original tcode berhasil dipertahankan",
-    content: `IF sy-tcode = 'LT06'.\n  gv_tcode = sy-tcode.\nENDIF.`,
+    before: "sy-tcode berubah otomatis ke LT04", // kondisi sebelum
+    after: "Original tcode berhasil dipertahankan", // kondisi sesudah
+    codeSnippet: `IF sy-tcode = 'LT06'.
+                  gv_tcode = sy-tcode.
+                  ENDIF.`,
+
+    // ================================
+    // MULTIPLE IMAGES (DEBUG FLOW)
+    // ================================
+    images: [
+  {
+    src: "/images/RLLB1200.png",
+    note: "Enhancement spot di RLLB1200"
+  },
+  {
+    src: "/images/ZRLVSDR40.png",
+    note: "Enhancement di ZRLVSDR40"
+  },
+  {
+    src: "/images/ZRLVSDR40_2.png",
+    note: "Validation logic di ZRLVSDR40"
+  },
+  {
+    src: "/images/ML02BFFC.png",
+    note: "Enhancement spot di ML02BFFC"
+  }
+],
   },
   {
     category: "ALV",
@@ -38,7 +70,7 @@ const data = [
     story: `User bingung karena data ALV tidak berubah setelah update. Root cause: tidak ada refresh method dipanggil. Setelah implement refresh_table_display, user langsung lihat perubahan tanpa reload program.`,
     before: "Data tidak update",
     after: "ALV refresh otomatis",
-    content: `CALL METHOD gr_alv->refresh_table_display.`,
+    codeSnippet: `CALL METHOD gr_alv->refresh_table_display.`,
   },
   {
     category: "BAPI",
@@ -52,7 +84,7 @@ const data = [
     story: `BAPI berhasil dipanggil tapi data tidak tersimpan. Setelah tracing, ternyata tidak ada COMMIT. Dengan menambahkan BAPI_TRANSACTION_COMMIT, data tersimpan konsisten.`,
     before: "Data tidak tersimpan",
     after: "Data berhasil commit",
-    content: `CALL FUNCTION 'BAPI_TRANSACTION_COMMIT' EXPORTING wait = 'X'.`,
+    codeSnippet: `CALL FUNCTION 'BAPI_TRANSACTION_COMMIT' EXPORTING wait = 'X'.`,
   },
   {
     category: "Performance",
@@ -66,7 +98,7 @@ const data = [
     story: `Program report berjalan sangat lambat. Ditemukan SELECT di dalam LOOP. Saya refactor menggunakan JOIN/FOR ALL ENTRIES. Hasilnya runtime turun drastis.`,
     before: "Program sangat lambat",
     after: "Query optimal dengan JOIN/FAE",
-    content: `Gunakan FOR ALL ENTRIES atau JOIN`,
+    codeSnippet: `Gunakan FOR ALL ENTRIES atau JOIN`,
   },
   {
     category: "IDoc",
@@ -80,7 +112,7 @@ const data = [
     story: `IDoc gagal (status 51) menyebabkan integrasi terhenti. Saya cek WE02, debug FM inbound, dan perbaiki mapping. Setelah fix, IDoc kembali auto process tanpa manual re-run.`,
     before: "IDoc error manual reprocess",
     after: "Auto processing normal",
-    content: `Check WE02 + debug FM inbound`,
+    codeSnippet: `Check WE02 + debug FM inbound`,
   },
 ];
 
@@ -94,6 +126,10 @@ const categoryCount = data.reduce((acc, item) => {
 }, {});
 
 export default function App() {
+  // ================================
+  // STATE MANAGEMENT
+  // ================================
+  // selected = data case yang sedang dibuka (detail view)
   const [activeCategory, setActiveCategory] = useState(null);
   const [selected, setSelected] = useState(null);
   const [search, setSearch] = useState("");
@@ -123,20 +159,29 @@ export default function App() {
   if (selected) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8 text-white">
+        {/* Back button */}
         <Button onClick={() => setSelected(null)}>⬅ Back</Button>
 
+        {/* Title */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <h1 className="text-3xl font-bold mt-4">{selected.title}</h1>
 
+        {/* Difficulty */}
           <p className={`mt-2 font-semibold ${getBadgeColor(selected.difficulty)}`}>
             {selected.difficulty}
           </p>
 
+          {/* ============================= */}
+          {/* BUSINESS IMPACT */}
+          {/* ============================= */}
           <div className="mt-4 bg-gray-800 border border-gray-700 p-4 rounded-2xl shadow">
             <h3 className="font-bold">💼 Business Impact</h3>
             <p>{selected.impact}</p>
           </div>
 
+          {/* ============================= */}
+          {/* METRICS */}
+          {/* ============================= */}
           <div className="mt-4 bg-gray-800 border border-gray-700 p-4 rounded-2xl shadow">
             <h3 className="font-bold">📊 Impact Metrics</h3>
             <ul className="list-disc ml-6">
@@ -145,12 +190,18 @@ export default function App() {
               ))}
             </ul>
           </div>
-
+          
+          {/* ============================= */}
+          {/* STORY */}
+          {/* ============================= */}
           <div className="mt-4 bg-gray-800 border border-blue-500/30 p-4 rounded-xl">
             <h3 className="font-bold">🧠 Story</h3>
             <p>{selected.story}</p>
           </div>
 
+          {/* ============================= */}
+          {/* BEFORE vs AFTER */}
+          {/* ============================= */}
           <div className="mt-4 grid grid-cols-2 gap-4">
             <div className="bg-red-900/30 border border-red-500/30 p-4 rounded-xl">
               <h3 className="font-bold">❌ Before</h3>
@@ -163,16 +214,69 @@ export default function App() {
             </div>
           </div>
 
-          <pre className="bg-gray-900 text-green-400 p-4 mt-6 rounded-xl">
-            {selected.content}
-          </pre>
+
+{/* ============================= */}
+{/* MULTIPLE IMAGES */}
+{/* ============================= */}
+{selected.images && (
+  <div className="mt-6">
+    <h3 className="font-bold mb-2">🖼️ Debug / Flow</h3>
+
+     {/* Grid image */}
+    <div className="grid md:grid-cols-2 gap-4">
+      {selected.images.map((img, index) => (
+        <div key={index}>
+          <img src={img.src}
+               alt={`debug-${index}`}
+               // Klik gambar -> open full screen
+               onClick={() => window.open(img.src, "_blank")}
+               className="rounded-xl border border-gray-700 cursor-pointer hover:scale-105 transition"
+          />
+
+          {/* Note per image */}
+          {img.note && (
+            <p className="text-sm text-gray-400 mt-1">
+              {img.note}
+            </p>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+{/* ============================= */}
+{/* CODE SNIPPET */}
+{/* ============================= */}
+<div className="mt-6">
+  <h3 className="font-bold mb-2">💻 Code Snippet</h3>
+
+  <div className="relative">
+    <pre className="bg-gray-900 text-green-400 p-4 rounded-xl overflow-x-auto">
+      {selected.codeSnippet}
+    </pre>
+
+    <button
+      onClick={() => navigator.clipboard.writeText(selected.codeSnippet)}
+      className="absolute top-2 right-2 text-xs bg-gray-700 px-2 py-1 rounded hover:bg-gray-600"
+    >
+      Copy
+    </button>
+  </div>
+</div>
         </motion.div>
       </div>
     );
   }
 
+  // ================================
+  // MAIN RENDER
+  // ================================
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-700 p-8 text-white">
+      {/* ========================================= */}
+      {/* LIST VIEW (CARD LIST) */}
+      {/* ========================================= */}
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
