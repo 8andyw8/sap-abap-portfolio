@@ -178,8 +178,35 @@ export default function App() {
         animate={{ opacity: 1, y: 0 }}
         className="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-cyan-400 text-transparent bg-clip-text"
       >
-        SAP ABAP Experience Hub
+        Andy Wijaya — SAP ABAP Developer
       </motion.h1>
+
+      <div className="flex gap-4 mt-4">
+  <a href="mailto:8andyw8@gmail.com">
+    <Button className="bg-blue-500 hover:bg-blue-600 text-white">
+      💼 Hire Me
+    </Button>
+  </a>
+
+  <a href="https://www.linkedin.com/in/andy-w-a33233a0/" target="_blank">
+    <Button variant="outline" className="border-gray-500 text-gray-300 hover:bg-gray-700">
+      🔗 LinkedIn
+    </Button>
+  </a>
+
+  <a href="https://wa.me/6281298600552" target="_blank">
+  <Button className="bg-green-500 hover:bg-green-600 text-white">
+    💬 WhatsApp
+  </Button>
+</a>
+
+</div>
+
+
+
+      <p className="text-gray-400 text-sm mb-4">
+        Real Project Experience & Troubleshooting Cases
+      </p>
 
       <p className="mb-6 text-gray-300">
         Real-world SAP troubleshooting portfolio with measurable impact
